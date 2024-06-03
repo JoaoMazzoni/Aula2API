@@ -18,71 +18,64 @@ namespace Repositories
         public bool Insert(Car car)
         {
             bool result = false;
-            Console.WriteLine("Camada Repository");
 
             try
             {
-
-                
-
                 SqlCommand cmd = new SqlCommand(Car.INSERT, conn);
-
                 cmd.Parameters.Add(new SqlParameter("@Name", car.Name));
                 cmd.Parameters.Add(new SqlParameter("@Color", car.Color));
                 cmd.Parameters.Add(new SqlParameter("@Year", car.Year));
+                cmd.Parameters.Add(new SqlParameter("@InsuranceId", car.Insurance.Id));
                 cmd.ExecuteNonQuery();
                 result = true;
+
             }
             catch (Exception)
             {
-                return result;
+                result = false;
             }
             finally
             {
                 conn.Close();
             }
-
             return result;
-
         }
 
         public bool Update(Car car)
         {
-
             bool result = false;
+
             try
             {
-
-               
-
                 SqlCommand cmd = new SqlCommand(Car.UPDATE, conn);
-
                 cmd.Parameters.Add(new SqlParameter("@Name", car.Name));
                 cmd.Parameters.Add(new SqlParameter("@Color", car.Color));
                 cmd.Parameters.Add(new SqlParameter("@Year", car.Year));
                 cmd.Parameters.Add(new SqlParameter("@Id", car.Id));
                 cmd.ExecuteNonQuery();
                 result = true;
+
             }
             catch (Exception)
             {
-                return result;
+                result = false;
             }
             finally
             {
                 conn.Close();
             }
-
             return result;
         }
 
         public bool Delete(int id)
         {
             bool result = false;
+
             try
             {
                 SqlCommand cmd = new SqlCommand(Car.DELETE, conn);
                 cmd.Parameters.Add(new SqlParameter("@Id", id));
+
                 return (cmd.ExecuteNonQuery() > 0);
 
             }
@@ -94,31 +87,33 @@ namespace Repositories
             {
                 conn.Close();
             }
-
             return result;
-
         }
 
         public List<Car> GetAll()
         {
             List<Car> cars = new List<Car>();
+
             StringBuilder sb = new StringBuilder();
-            sb.Append(Car.GETALL); //StringBuilder.Append() - Concatena as strings
+            sb.Append(Car.GETALL);
+
+            /* sb.Append("SELECT Id, ");
+             sb.Append("       Name, ");
+             sb.Append("       Color, ");
+             sb.Append("       Year ");
+             sb.Append("  FROM TB_CAR");*/
 
             try
             {
                 SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
                 SqlDataReader reader = cmd.ExecuteReader();
-
                 while (reader.Read())
                 {
                     Car car = new Car();
-
                     car.Id = reader.GetInt32(0);
                     car.Name = reader.GetString(1);
                     car.Color = reader.GetString(2);
                     car.Year = reader.GetInt32(3);
-
                     cars.Add(car);
                 }
             }
@@ -130,25 +125,20 @@ namespace Repositories
             {
                 conn.Close();
             }
-
             return cars;
         }
 
-
-
-        public Car Get(int id)
+        public Car? Get(int id)
         {
-
             StringBuilder sb = new StringBuilder();
-            sb.Append(Car.GET); //StringBuilder.Append() - Concatena as strings
+            sb.Append(Car.GET);
             Car? car = null;
-
             try
             {
                 SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
                 cmd.Parameters.Add(new SqlParameter("@Id", id));
-                SqlDataReader reader = cmd.ExecuteReader();
 
+                SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
                     car = new Car();
@@ -157,7 +147,6 @@ namespace Repositories
                     car.Color = reader.GetString(2);
                     car.Year = reader.GetInt32(3);
                 }
-
             }
             catch (Exception)
             {
@@ -167,12 +156,11 @@ namespace Repositories
             {
                 conn.Close();
             }
-
             return car;
-
         }
-
-
-
     }
+
+
+
 }
+
